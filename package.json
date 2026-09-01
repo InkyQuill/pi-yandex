@@ -1,6 +1,6 @@
 {
 	"name": "pi-yandex",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Pi extension that adds Yandex AI Studio (Alice AI LLM) as a model provider",
 	"license": "MIT",
 	"type": "module",

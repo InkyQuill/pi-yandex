@@ -10,19 +10,15 @@ export const PROVIDER_NAME = "Yandex AI Studio";
  */
 export const BASE_URL = "https://ai.api.cloud.yandex.net/v1";
 
-/** Context window of the Alice AI LLM models, per AI Studio docs. */
-const CONTEXT_WINDOW = 32768;
-/**
- * Max output tokens pi requests per response. Lower this if the API
- * rejects it for a particular model/generation.
- */
-const MAX_TOKENS = 8192;
-
 interface AliceModelDef {
 	/** Model name as used in the `gpt://<folder>/<model>` URI. */
 	id: string;
 	/** Display name in pi's model picker. */
 	name: string;
+	/** Context window (input tokens) per AI Studio docs. */
+	contextWindow: number;
+	/** Max output tokens pi requests per response. */
+	maxTokens: number;
 	/**
 	 * Official AI Studio pricing, sync mode incl. VAT, ₽ per 1M tokens
 	 * (https://aistudio.yandex.ru/ru/docs/ai-studio/pricing).
@@ -31,16 +27,23 @@ interface AliceModelDef {
 }
 
 const ALICE_MODELS: AliceModelDef[] = [
+	// 131,072-token context; output cap not documented — kept at Yandex's
+	// default max_tokens of 8,192.
 	// 0.50 ₽/1K input, 0.50 ₽/1K cached input, 1.20 ₽/1K output
 	{
 		id: "aliceai-llm/latest",
 		name: "Alice AI LLM",
+		contextWindow: 131072,
+		maxTokens: 8192,
 		cost: { input: 500, output: 1200, cacheRead: 500 },
 	},
+	// 65,536-token input context; output up to 16,384 tokens.
 	// 0.10 ₽/1K input, 0.025 ₽/1K cached input, 0.20 ₽/1K output
 	{
 		id: "aliceai-llm-flash/latest",
 		name: "Alice AI LLM Flash",
+		contextWindow: 65536,
+		maxTokens: 16384,
 		cost: { input: 100, output: 200, cacheRead: 25 },
 	},
 ];
@@ -72,8 +75,8 @@ export function buildProviderConfig(folderId: string, apiKey: string): ProviderC
 			// active. (Yandex bills per 1K tokens; "tool tokens" aren't
 			// representable in pi's cost model and are ignored.)
 			cost: { input: model.cost.input, output: model.cost.output, cacheRead: model.cost.cacheRead, cacheWrite: 0 },
-			contextWindow: CONTEXT_WINDOW,
-			maxTokens: MAX_TOKENS,
+			contextWindow: model.contextWindow,
+			maxTokens: model.maxTokens,
 			compat: {
 				// Yandex's OpenAI-compatible endpoint is close to the classic
 				// (2023-era) OpenAI surface: no `store`, no `developer` role,

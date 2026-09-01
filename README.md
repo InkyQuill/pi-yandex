@@ -3,10 +3,10 @@
 A [pi](https://pi.dev) extension that adds **Yandex AI Studio** as a model provider, giving pi
 access to the **Alice AI LLM** models through Yandex's OpenAI-compatible API:
 
-| Model                | URI                                    |
-| -------------------- | -------------------------------------- |
-| Alice AI LLM         | `gpt://<folder-id>/aliceai-llm/latest` |
-| Alice AI LLM Flash   | `gpt://<folder-id>/aliceai-llm-flash/latest` |
+| Model              | URI                                          | Context  | Max output |
+| ------------------ | -------------------------------------------- | -------- | ---------- |
+| Alice AI LLM       | `gpt://<folder-id>/aliceai-llm/latest`       | 131,072  | 8,192      |
+| Alice AI LLM Flash | `gpt://<folder-id>/aliceai-llm-flash/latest` | 65,536   | 16,384     |
 
 ## How it works
 
@@ -77,8 +77,10 @@ pi --provider yandex-ai-studio
 - `compat` flags (in `src/models.ts`) disable OpenAI-specific extensions Yandex's endpoint
   doesn't document: `store`, the `developer` role, `reasoning_effort`, and `strict` tool calls;
   output limits are sent as `max_tokens`.
-- Context window is set to 32,768 tokens per AI Studio docs; `maxTokens` (requested output cap)
-  is 8,192 — lower it in `src/models.ts` if a request is ever rejected.
+- Context windows per AI Studio: 131,072 tokens for Alice AI LLM, 65,536 for Flash. pi
+  requests `max_tokens` = 16,384 for Flash (its documented output ceiling) and 8,192 for
+  Alice AI LLM (output cap not documented; Yandex's default). Tweak these in
+  `src/models.ts` if requests are ever rejected.
 - Reasoning mode is **not wired up**: AI Studio exposes reasoning outside the standard
   OpenAI-compat parameters, so the models register with `reasoning: false`. Text, tools, and
   streaming usage stats work as usual.
