@@ -1,0 +1,41 @@
+{
+	"name": "pi-yandex",
+	"version": "0.1.0",
+	"description": "Pi extension that adds Yandex AI Studio (Alice AI LLM) as a model provider",
+	"license": "MIT",
+	"type": "module",
+	"keywords": [
+		"pi-extension",
+		"pi",
+		"yandex",
+		"yandex-cloud",
+		"ai-studio",
+		"alice",
+		"aliceai-llm",
+		"llm"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/InkyQuill/pi-yandex.git"
+	},
+	"homepage": "https://github.com/InkyQuill/pi-yandex#readme",
+	"bugs": "https://github.com/InkyQuill/pi-yandex/issues",
+	"pi": {
+		"extensions": [
+			"./src/index.ts"
+		]
+	},
+	"scripts": {
+		"check": "tsc --noEmit",
+		"test": "bun test/footer.ts"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-tui": ">=0.84.0"
+	},
+	"devDependencies": {
+		"@earendil-works/pi-coding-agent": "^0.84.1",
+		"@earendil-works/pi-tui": "^0.84.1",
+		"@types/node": "^24",
+		"typescript": "^5"
+	}
+}
